@@ -3,9 +3,12 @@ import React from "react";
 // import { useTable } from "react-table";
 import { Link, useParams } from "react-router-dom";
 import KeyboardBackspaceRoundedIcon from "@mui/icons-material/KeyboardBackspaceRounded";
-import { Table } from "../components/Table";
+
+import { Tabla } from "../components/Table";
 import { readMissings } from "../DataBase";
+import { CircularProgress } from "@mui/material";
 function ListMissings() {
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [objetos, setObjetos] = React.useState<object[]>([]);
   // const { missings, addMissing } = useAppContext();
   const { name } = useParams<string>();
@@ -14,6 +17,11 @@ function ListMissings() {
     readMissings(name).then((value) => setObjetos(value));
   }, [objetos, name]);
 
+  setTimeout(function () {
+    setLoading(true);
+  }, 500);
+
+  // se esta trabajando con react table
   const data = React.useMemo(() => objetos, [objetos]);
 
   const columns: any = React.useMemo(
@@ -44,8 +52,10 @@ function ListMissings() {
           {name}
         </h1>
       </div>
-      {objetos.length > 0 ? (
-        <Table columns={columns} data={data} name={name} />
+      {!loading ? (
+        <CircularProgress className="mx-auto my-10" />
+      ) : objetos.length > 0 ? (
+        <Tabla columns={columns} data={data} name={name} />
       ) : (
         <h1 className="text-center font-bold">no hay faltantes registrados</h1>
       )}

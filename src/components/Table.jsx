@@ -1,6 +1,9 @@
 import React from "react";
 // import styled from "styled-components";
 import { useTable, usePagination, useRowSelect } from "react-table";
+import TableContainer from "@mui/material/TableContainer";
+import Table from "@mui/material/Table";
+import Paper from "@mui/material/Paper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button } from "@mui/material";
 // import { useAppContext } from "../context/GlobalContext";
@@ -8,7 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { deleteMissing, updateStateMissings } from "../DataBase";
 import Swal from "sweetalert2";
 
-export function Table({ columns, data, name }) {
+export function Tabla({ columns, data, name }) {
   // const { deleteMissing, missings, updateStateMissing } = useAppContext();
   // console.log(missings);
 
@@ -101,66 +104,76 @@ export function Table({ columns, data, name }) {
           )}
         </code>
       </pre>
-      <table {...getTableProps()}>
-        <thead>
-          {headerGroups.map((headerGroup, i) => (
-            <tr key={i} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
-            return (
-              <>
-                <tr className="" key={i} {...row.getRowProps()}>
-                  {row.cells.map((cell, i) => {
-                    return (
-                      <>
-                        <td key={i} {...cell.getCellProps()}>
-                          {cell.render("Cell")}
-                        </td>
-                      </>
-                    );
-                  })}
+      <TableContainer component={Paper}>
+        <Table {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr key={headerGroup} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th key={column} {...column.getHeaderProps()}>
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <>
+                  <tr key={row} {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <>
+                          <td
+                            className="px-2 sm:px-0"
+                            key={cell}
+                            {...cell.getCellProps()}
+                          >
+                            {cell.render("Cell")}
+                          </td>
+                        </>
+                      );
+                    })}
+                    <td>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        className="px-2 mx-3 my-2  sm:flex sm:mx-0"
+                        onClick={() => {
+                          Swal.fire({
+                            title: "Estas seguro que deseas borrarlo?",
+                            text: "¡No podrás revertir esto!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "¡Sí, bórralo!",
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              Swal.fire(
+                                "Eliminado!",
+                                `El faltante ${row.original.medicine} ha sido eliminado`,
+                                "success"
+                              );
+                              deleteMissing(name, row.original.id);
+                            }
+                          });
+                        }}
+                      >
+                        <DeleteIcon />
+                      </Button>
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
+          </tbody>
+        </Table>
+      </TableContainer>
 
-                  <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
-                    className="px-2 my-2 hidden sm:flex"
-                    onClick={() => {
-                      Swal.fire({
-                        title: "Estas seguro que deseas borrarlo?",
-                        text: "¡No podrás revertir esto!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "¡Sí, bórralo!",
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          Swal.fire(
-                            "Eliminado!",
-                            `El faltante ${row.original.medicine} ha sido eliminado`,
-                            "success"
-                          );
-                          deleteMissing(name, row.original.id);
-                        }
-                      });
-                    }}
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </tr>
-              </>
-            );
-          })}
-        </tbody>
-      </table>
       {/* 
         Pagination can be built however you'd like. 
         This is just a very basic UI implementation:
