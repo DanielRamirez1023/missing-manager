@@ -35,7 +35,7 @@ function ListMissings() {
   );
 
   return (
-    <section className="flex flex-col mt-5 bg-white mx-1 px-3  sm:w-3/5 py-4 sm:p-4 sm:mx-auto rounded ">
+    <section className="flex flex-col mt-10 bg-white mx-1 px-3  sm:w-3/5 py-4 sm:p-4 sm:mx-auto rounded ">
       <div className="flex ">
         <Link to={`/menu/${name}`}>
           <KeyboardBackspaceRoundedIcon className="mr-24 sm:mr-72" />
